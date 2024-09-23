@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	_ "github.com/gorilla/mux"
+	"github.com/polyakovaa/standartserver/storage"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,4 +23,14 @@ func (a *API) configureRouterField() {
 	a.router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello! I'm rest api"))
 	})
+}
+
+// конфигурируем хранилище
+func (a *API) configureStorageField() error {
+	storage := storage.New(a.config.Storage)
+	if err := storage.Open(); err != nil {
+		return err
+	}
+	a.storage = storage
+	return nil
 }

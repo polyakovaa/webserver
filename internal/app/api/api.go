@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/polyakovaa/standartserver/storage"
 	"github.com/sirupsen/logrus"
 )
 
@@ -13,6 +14,8 @@ type API struct {
 	config *Config
 	logger *logrus.Logger
 	router *mux.Router
+	//поле для работы с хранилищем
+	storage *storage.Storage
 }
 
 // API constructor: build base API instance
@@ -34,6 +37,11 @@ func (api *API) Start() error {
 
 	//Конфигурируем маршрутизатор
 	api.configureRouterField()
+
+	//конфигурируем хранилище
+	if err := api.configureStorageField(); err != nil {
+		return err
+	}
 	//на этапе валидноо завершения стартуем сервер
 	return http.ListenAndServe(api.config.BindAddr, api.router)
 }
